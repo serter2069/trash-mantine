@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mantine/core": "^7.17.2",
+    "@mantine/hooks": "^7.17.2",
     "better-sqlite3": "^12.8.0",
     "jose": "^6.2.1",
     "next": "14.2.18",
