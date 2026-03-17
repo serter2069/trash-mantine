@@ -2,10 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Container,
+  Paper,
+  Title,
+  Text,
+  TextInput,
+  Button,
+  Stack,
+} from '@mantine/core';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,32 +39,31 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Мысли в урну</CardTitle>
-          <CardDescription>Введите email для входа</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
+    <Container size={400} style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Paper shadow="md" p="xl" radius="md" w="100%">
+        <Stack gap="md">
+          <div>
+            <Title order={2}>Мысли в урну</Title>
+            <Text c="dimmed" size="sm">Введите email для входа</Text>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <Stack gap="sm">
+              <TextInput
+                label="Email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-            </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Отправляем...' : 'Получить код'}
-            </Button>
+              {error && <Text c="red" size="sm">{error}</Text>}
+              <Button type="submit" fullWidth loading={loading}>
+                Получить код
+              </Button>
+            </Stack>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+        </Stack>
+      </Paper>
+    </Container>
   );
 }

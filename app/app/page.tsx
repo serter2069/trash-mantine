@@ -2,9 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  AppShell,
+  Container,
+  Title,
+  Text,
+  Textarea,
+  Button,
+  Stack,
+  Card,
+  Group,
+  Loader,
+} from '@mantine/core';
 
 interface Thought {
   id: number;
@@ -68,81 +77,85 @@ export default function AppPage() {
   }
 
   const totalPages = Math.ceil(total / 20);
+  const thoughtsWord = total === 1 ? 'мысль' : total >= 2 && total <= 4 ? 'мысли' : 'мыслей';
 
   return (
-    <div className="min-h-screen p-4 max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Мысли в урну</h1>
-        <Button variant="outline" size="sm" onClick={handleLogout}>
-          Выйти
-        </Button>
-      </div>
+    <AppShell
+      header={{ height: 56 }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Container size="sm" h="100%" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Title order={3}>Мысли в урну</Title>
+          <Button variant="outline" size="sm" onClick={handleLogout}>
+            Выйти
+          </Button>
+        </Container>
+      </AppShell.Header>
 
-      <Card>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <Textarea
-              placeholder="Напишите негативную мысль..."
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              rows={4}
-              className="resize-none"
-            />
-            <Button type="submit" className="w-full" disabled={submitting || !text.trim()}>
-              {submitting ? 'Выбрасываем...' : 'Выбросить'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold">
-          История ({total} {total === 1 ? 'мысль' : total >= 2 && total <= 4 ? 'мысли' : 'мыслей'})
-        </h2>
-
-        {loading ? (
-          <p className="text-muted-foreground text-sm">Загрузка...</p>
-        ) : thoughts.length === 0 ? (
-          <p className="text-muted-foreground text-sm">Пока пусто. Выбросьте первую мысль.</p>
-        ) : (
-          thoughts.map((t) => (
-            <Card key={t.id}>
-              <CardHeader className="pb-2 pt-4">
-                <CardTitle className="text-sm font-normal text-muted-foreground">
-                  {new Date(t.created_at).toLocaleString('ru-RU')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <p className="text-sm whitespace-pre-wrap">{t.text}</p>
-              </CardContent>
+      <AppShell.Main>
+        <Container size="sm">
+          <Stack gap="lg" mt="md">
+            <Card shadow="sm" p="lg" radius="md" withBorder>
+              <form onSubmit={handleSubmit}>
+                <Stack gap="sm">
+                  <Textarea
+                    placeholder="Напишите негативную мысль..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    rows={4}
+                    resize="none"
+                  />
+                  <Button type="submit" fullWidth loading={submitting} disabled={!text.trim()}>
+                    Выбросить
+                  </Button>
+                </Stack>
+              </form>
             </Card>
-          ))
-        )}
 
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
-              Назад
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {page} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >
-              Вперёд
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+            <Title order={4}>
+              История ({total} {thoughtsWord})
+            </Title>
+
+            {loading ? (
+              <Group justify="center"><Loader size="sm" /></Group>
+            ) : thoughts.length === 0 ? (
+              <Text c="dimmed" size="sm">Пока пусто. Выбросьте первую мысль.</Text>
+            ) : (
+              thoughts.map((t) => (
+                <Card key={t.id} shadow="xs" p="md" radius="md" withBorder>
+                  <Text size="xs" c="dimmed" mb={6}>
+                    {new Date(t.created_at).toLocaleString('ru-RU')}
+                  </Text>
+                  <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{t.text}</Text>
+                </Card>
+              ))
+            )}
+
+            {totalPages > 1 && (
+              <Group justify="space-between">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  Назад
+                </Button>
+                <Text size="sm" c="dimmed">{page} / {totalPages}</Text>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Вперёд
+                </Button>
+              </Group>
+            )}
+          </Stack>
+        </Container>
+      </AppShell.Main>
+    </AppShell>
   );
 }

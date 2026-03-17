@@ -2,10 +2,15 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Container,
+  Paper,
+  Title,
+  Text,
+  TextInput,
+  Button,
+  Stack,
+} from '@mantine/core';
 
 function VerifyForm() {
   const router = useRouter();
@@ -37,36 +42,34 @@ function VerifyForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Введите код</CardTitle>
-          <CardDescription>
-            Код отправлен на {email}. (Подсказка: всегда <strong>1234</strong>)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="code">4-значный код</Label>
-              <Input
-                id="code"
-                type="text"
+    <Container size={400} style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Paper shadow="md" p="xl" radius="md" w="100%">
+        <Stack gap="md">
+          <div>
+            <Title order={2}>Введите код</Title>
+            <Text c="dimmed" size="sm">
+              Код отправлен на {email}. (Подсказка: всегда <strong>1234</strong>)
+            </Text>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <Stack gap="sm">
+              <TextInput
+                label="4-значный код"
                 placeholder="1234"
                 maxLength={4}
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required
               />
-            </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Проверяем...' : 'Войти'}
-            </Button>
+              {error && <Text c="red" size="sm">{error}</Text>}
+              <Button type="submit" fullWidth loading={loading}>
+                Войти
+              </Button>
+            </Stack>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+        </Stack>
+      </Paper>
+    </Container>
   );
 }
 
